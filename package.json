@@ -1,0 +1,28 @@
+{
+  "name": "express-mesto-gha",
+  "version": "1.0.0",
+  "description": "Проектная работа 13",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "npx eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/svneste/express-mesto-gha.git"
+  },
+  "author": "Нестерович",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/svneste/express-mesto-gha/issues"
+  },
+  "homepage": "https://github.com/svneste/express-mesto-gha#readme",
+  "devDependencies": {
+    "eslint": "^8.23.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.1",
+    "eslint-plugin-react": "^7.31.6",
+    "eslint-plugin-react-hooks": "^4.6.0"
+  }
+}
