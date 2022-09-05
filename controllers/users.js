@@ -28,7 +28,11 @@ const findUser = (req, res) => {
 
 const getUser = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => res.status(STATUS_OK).send({ data: user }))
+    .then((user) => {
+      if (!user) {
+        res.status(ERROR_ID).send({ message: 'Такого пользователя не существует' });
+      }
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Пользователь по указанному _id не найден' });
