@@ -31,7 +31,7 @@ const getUser = (req, res) => {
     .then((user) => {
       if (!user) {
         res.status(ERROR_ID).send({ message: 'Такого пользователя не существует' });
-      }
+      } else res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
