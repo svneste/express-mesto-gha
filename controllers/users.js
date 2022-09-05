@@ -31,7 +31,7 @@ const getUser = (req, res) => {
     .then((user) => res.status(STATUS_OK).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_ID).send({ message: 'Пользователь по указанному _id не найден' });
+        res.status(BAD_REQUEST).send({ message: 'Пользователь по указанному _id не найден' });
       } else {
         res.status(ERROR_SERVER).send({ message: 'Сервер не может обработать запрос' });
       }
