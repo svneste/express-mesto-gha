@@ -8,7 +8,7 @@
 Для этого замените разметку бейджей на следующий фрагмент, подставив вместо `${имя_пользователя}` и `${имя_репозитория}` соответствующие значения.
 
 ```
-[![Tests for sprint 13](https://github.com/svneste/express-mesto-gha/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/svneste/express-mesto-gha/actions/workflows/tests-13-sprint.yml) 
+[![Tests for sprint 13](https://github.com/svneste/express-mesto-gha/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/svneste/express-mesto-gha/actions/workflows/tests-13-sprint.yml) ]
 
 
 ## Директории
