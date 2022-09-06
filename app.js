@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const routerUsers = require('./routes/users');
 const routerCards = require('./routes/cards');
+const routerNotFound = require('./routes/error-not-found');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 app.use('/users', routerUsers);
 app.use('/cards', routerCards);
+app.use('*', routerNotFound);
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
