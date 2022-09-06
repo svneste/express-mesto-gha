@@ -45,10 +45,15 @@ const addLike = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.status(STATUS_OK).send({ data: card }))
+    .then((card) => {
+      if (!card) {
+        res.status(ERROR_ID).send({ message: 'Такой карточки не существует' });
+      } else res.status(STATUS_OK).send(card);
+    })
+
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_ID).send({ message: 'Передан несуществующий _id карточки.' });
+        res.status(BAD_REQUEST).send({ message: 'Передан несуществующий _id карточки.' });
       } else {
         res.status(ERROR_SERVER).send({ message: 'Сервер не может обработать запрос' });
       }
@@ -61,10 +66,14 @@ const dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.status(STATUS_OK).send({ data: card }))
+    .then((card) => {
+      if (!card) {
+        res.status(ERROR_ID).send({ message: 'Такой карточки не существует' });
+      } else res.status(STATUS_OK).send(card);
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_ID).send({ message: 'Передан несуществующий _id карточки.' });
+        res.status(BAD_REQUEST).send({ message: 'Передан несуществующий _id карточки.' });
       } else {
         res.status(ERROR_SERVER).send({ message: 'Сервер не может обработать запрос' });
       }
