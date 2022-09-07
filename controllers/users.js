@@ -10,7 +10,7 @@ const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => res.status(STATUS_OK).send({ data: user }))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя' });
@@ -35,7 +35,7 @@ const getUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Пользователь по указанному _id не найден' });
+        res.status(BAD_REQUEST).send({ message: 'Передан некорректный _id пользователя' });
       } else {
         res.status(ERROR_SERVER).send({ message: 'Сервер не может обработать запрос' });
       }
@@ -66,12 +66,12 @@ const refreshAvatar = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true },
+    { new: true, runValidators: true },
   )
     .then((user) => res.status(STATUS_OK).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(ERROR_ID).send({ message: 'Пользователь по указанному _id не найден' });
+      if (err.name === 'ValidationError') {
+        res.status(BAD_REQUEST).send({ message: 'Неверные данные' });
       } else {
         res.status(ERROR_SERVER).send({ message: 'Сервер не может обработать запрос' });
       }

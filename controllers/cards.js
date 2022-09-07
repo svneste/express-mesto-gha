@@ -36,7 +36,7 @@ const deleteCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Карточка с указанным _id не найдена' });
+        res.status(BAD_REQUEST).send({ message: 'Передан некорректный _id карточки' });
       } else {
         res.status(ERROR_SERVER).send({ message: 'Сервер не может обработать запрос' });
       }
@@ -57,7 +57,7 @@ const addLike = (req, res) => {
 
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Передан несуществующий _id карточки.' });
+        res.status(BAD_REQUEST).send({ message: 'Передан некорректный _id карточки' });
       } else {
         res.status(ERROR_SERVER).send({ message: 'Сервер не может обработать запрос' });
       }
@@ -77,7 +77,7 @@ const dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Передан несуществующий _id карточки.' });
+        res.status(BAD_REQUEST).send({ message: 'Передан некорректный _id карточки' });
       } else {
         res.status(ERROR_SERVER).send({ message: 'Сервер не может обработать запрос' });
       }
