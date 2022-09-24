@@ -6,6 +6,7 @@ const { STATUS_OK } = require('../utils/constants');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequetError = require('../errors/bad-request-err');
 const UnauthorizedError = require('../errors/unauthorized-err');
+const EMAILEXIST = require('../errors/email-err');
 
 const createUser = (req, res, next) => {
   const {
@@ -35,11 +36,11 @@ const createUser = (req, res, next) => {
       });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequetError('Переданы некорректные данные при создании пользователя'));
-      } else {
-        next(err);
+      if (err.name === 'ValidationError') next(new BadRequetError('Переданы некорректные данные при создании пользователя'));
+      if (err.name === 'MongoServerError' && err.code === 11000) {
+        next(new EMAILEXIST('Данный email уже существует'));
       }
+      next(err);
     });
 };
 
@@ -54,7 +55,7 @@ const getUser = (req, res, next) => {
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Такого пользователя не существует');
-      } else res.status(STATUS_OK).send(user._id);
+      } else res.status(STATUS_OK).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
