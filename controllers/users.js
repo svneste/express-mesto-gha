@@ -24,7 +24,16 @@ const createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      if (!user) {
+        throw new BadRequetError();
+      }
+      return res.status(STATUS_OK).send({
+        data: {
+          name, about, avatar, email,
+        },
+      });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequetError('Переданы некорректные данные при создании пользователя'));
