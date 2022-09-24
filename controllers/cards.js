@@ -1,18 +1,15 @@
 const Card = require('../models/card');
-const {
-  STATUS_OK,
-  BAD_REQUEST,
-  ERROR_ID,
-  ERROR_SERVER,
-} = require('../utils/constants');
+const STATUS_OK = require('../utils/constants');
+const NotFoundError = require('../errors/not-found-err');
+const BadRequetError = require('../errors/bad-request-err');
 
-const findCards = (req, res) => {
+const findCards = (req, res, next) => {
   Card.find({})
     .then((users) => res.status(STATUS_OK).send(users))
-    .catch(() => res.status(ERROR_SERVER).send({ message: 'Сервер не может обработать запрос' }));
+    .catch(next);
 };
 
-const createCard = (req, res) => {
+const createCard = (req, res, next) => {
   const owner = req.user._id;
   const { name, link } = req.body;
 
@@ -20,30 +17,30 @@ const createCard = (req, res) => {
     .then((card) => res.status(STATUS_OK).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании карточки' });
+        next(new BadRequetError('Переданы некорректные данные при создании карточки'));
       } else {
-        res.status(ERROR_SERVER).send({ message: 'Сервер не может обработать запрос' });
+        next(err);
       }
     });
 };
 
-const deleteCard = (req, res) => {
+const deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params.cardId)
     .then((card) => {
       if (!card) {
-        res.status(ERROR_ID).send({ message: 'Такой карточки не существует' });
+        throw new NotFoundError('Такой карточки не существует');
       } else res.status(STATUS_OK).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Передан некорректный _id карточки' });
+        next(new BadRequetError('Передан некорректный _id карточки'));
       } else {
-        res.status(ERROR_SERVER).send({ message: 'Сервер не может обработать запрос' });
+        next(err);
       }
     });
 };
 
-const addLike = (req, res) => {
+const addLike = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
@@ -51,20 +48,19 @@ const addLike = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(ERROR_ID).send({ message: 'Такой карточки не существует' });
+        throw new NotFoundError('Такой карточки не существует');
       } else res.status(STATUS_OK).send(card);
     })
-
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Передан некорректный _id карточки' });
+        next(new BadRequetError('Передан некорректный _id карточки'));
       } else {
-        res.status(ERROR_SERVER).send({ message: 'Сервер не может обработать запрос' });
+        next(err);
       }
     });
 };
 
-const dislikeCard = (req, res) => {
+const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
@@ -72,14 +68,14 @@ const dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        res.status(ERROR_ID).send({ message: 'Такой карточки не существует' });
+        throw new NotFoundError('Такой карточки не существует');
       } else res.status(STATUS_OK).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Передан некорректный _id карточки' });
+        next(new BadRequetError('Передан некорректный _id карточки'));
       } else {
-        res.status(ERROR_SERVER).send({ message: 'Сервер не может обработать запрос' });
+        next(err);
       }
     });
 };

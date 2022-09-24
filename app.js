@@ -5,20 +5,38 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const routerUsers = require('./routes/users');
 const routerCards = require('./routes/cards');
-const routerNotFound = require('./routes/error-not-found');
+const routerNotFound = require('./middlewares/error-not-found');
+const auth = require('./middlewares/auth');
+const {
+  login,
+  createUser,
+} = require('./controllers/users');
+
+const {
+  validationCreateUser,
+  validationLoginUser,
+} = require('./middlewares/validations');
 
 const app = express();
-
-app.use((req, res, next) => {
-  req.user = {
-    _id: '631397f52610b6d35e70a844',
-  };
-  next();
-});
 app.use(bodyParser.json());
+app.post('/signin', validationLoginUser, login);
+app.post('/signup', validationCreateUser, createUser);
+
+app.use(auth);
+
 app.use('/users', routerUsers);
 app.use('/cards', routerCards);
 app.use('*', routerNotFound);
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? 'На сервере произошла ошибка'
+        : message,
+    });
+});
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,

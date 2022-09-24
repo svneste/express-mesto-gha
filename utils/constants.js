@@ -1,6 +1,7 @@
 const STATUS_OK = 200;
 const STATUS_CREATED = 201;
 const BAD_REQUEST = 400;
+const UNAUTHORIZED = 401;
 const ERROR_ID = 404;
 const ERROR_SERVER = 500;
 
@@ -8,6 +9,7 @@ module.exports = {
   STATUS_OK,
   STATUS_CREATED,
   BAD_REQUEST,
+  UNAUTHORIZED,
   ERROR_ID,
   ERROR_SERVER,
 };
