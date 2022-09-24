@@ -2,6 +2,7 @@ const express = require('express');
 
 const { PORT = 3000 } = process.env;
 const mongoose = require('mongoose');
+const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
 const routerUsers = require('./routes/users');
 const routerCards = require('./routes/cards');
@@ -27,6 +28,9 @@ app.use(auth);
 app.use('/users', routerUsers);
 app.use('/cards', routerCards);
 app.use('*', routerNotFound);
+
+app.use(errors());
+
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res
@@ -36,6 +40,7 @@ app.use((err, req, res, next) => {
         ? 'На сервере произошла ошибка'
         : message,
     });
+  next();
 });
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {

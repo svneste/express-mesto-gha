@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { STATUS_OK, BAD_REQUEST } = require('../utils/constants');
+const { STATUS_OK } = require('../utils/constants');
 
 const NotFoundError = require('../errors/not-found-err');
 const BadRequetError = require('../errors/bad-request-err');
@@ -23,15 +23,15 @@ const createUser = (req, res, next) => {
       avatar,
       email,
       password: hash,
-    })
-      .then((user) => res.send({ data: user }))
-      .catch((err) => {
-        if (err.name === 'ValidationError') {
-          next(new BadRequetError('Переданы некорректные данные при создании пользователя'));
-        } else {
-          next(err);
-        }
-      }));
+    }))
+    .then((user) => res.send({ data: user }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequetError('Переданы некорректные данные при создании пользователя'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const findUser = (req, res, next) => {
