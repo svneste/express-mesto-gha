@@ -2,6 +2,7 @@ const Card = require('../models/card');
 const STATUS_OK = require('../utils/constants');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequetError = require('../errors/bad-request-err');
+const Forbidden = require('../errors/forbidden-err');
 
 const findCards = (req, res, next) => {
   Card.find({})
@@ -24,19 +25,17 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById({ _id: req.params.cardId })
+    .orFail(() => new NotFoundError('Карточка не найдена'))
     .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Такой карточки не существует');
-      } else res.status(STATUS_OK).send(card);
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequetError('Передан некорректный _id карточки'));
+      if (!card.owner.equals(req.user._id)) {
+        next(new Forbidden('Это не ваша карта'));
       } else {
-        next(err);
+        Card.deleteOne({ card })
+          .then(() => res.send({ message: 'Карточка удалена' }));
       }
-    });
+    })
+    .catch(next);
 };
 
 const addLike = (req, res, next) => {

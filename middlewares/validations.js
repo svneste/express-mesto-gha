@@ -16,7 +16,7 @@ const validationCardId = celebrate({
 
 const validationUserId = celebrate({
   params: Joi.object().keys({
-    userdId: Joi.string().required().length(24),
+    userId: Joi.string().length(24).hex(),
   }),
 });
 
