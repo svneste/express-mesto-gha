@@ -5,7 +5,7 @@ const BadRequetError = require('../errors/bad-request-err');
 
 const findCards = (req, res, next) => {
   Card.find({})
-    .then((users) => res.status(STATUS_OK).send(users))
+    .then((cards) => res.send(cards))
     .catch(next);
 };
 
@@ -40,15 +40,13 @@ const deleteCard = (req, res, next) => {
 };
 
 const addLike = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    { $addToSet: { likes: req.user._id } },
-    { new: true },
-  )
+  Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, {
+    new: true,
+  })
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Такой карточки не существует');
-      } else res.status(STATUS_OK).send(card);
+      } else res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -68,7 +66,7 @@ const dislikeCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Такой карточки не существует');
-      } else res.status(STATUS_OK).send(card);
+      } else res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
