@@ -31,7 +31,8 @@ const deleteCard = (req, res, next) => {
         next(new Forbidden('Это не ваша карта'));
       } else {
         Card.deleteOne({ card })
-          .then(() => res.send({ message: 'Карточка удалена' }));
+          .then(() => res.send({ message: 'Карточка удалена' }))
+          .catch(next);
       }
     })
     .catch(next);

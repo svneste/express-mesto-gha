@@ -1,7 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { STATUS_OK } = require('../utils/constants');
 
 const NotFoundError = require('../errors/not-found-err');
 const BadRequetError = require('../errors/bad-request-err');
@@ -25,11 +24,8 @@ const createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => {
-      if (!user) {
-        throw new BadRequetError();
-      }
-      return res.status(STATUS_OK).send({
+    .then(() => {
+      res.send({
         data: {
           name, about, avatar, email,
         },
@@ -37,16 +33,17 @@ const createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') next(new BadRequetError('Переданы некорректные данные при создании пользователя'));
-      if (err.name === 'MongoServerError' && err.code === 11000) {
+      else if (err.name === 'MongoServerError' && err.code === 11000) {
         next(new EMAILEXIST('Данный email уже существует'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
 const findUser = (req, res, next) => {
   User.find({})
-    .then((users) => res.status(STATUS_OK).send(users))
+    .then((users) => res.send(users))
     .catch(next);
 };
 
@@ -55,7 +52,7 @@ const getUser = (req, res, next) => {
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Такого пользователя не существует');
-      } else res.status(STATUS_OK).send(user);
+      } else res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -74,7 +71,7 @@ const refreshProfile = (req, res, next) => {
     { name, about },
     { new: true, runValidators: true },
   )
-    .then((user) => res.status(STATUS_OK).send({ data: user }))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequetError('Неверные данные'));
@@ -92,7 +89,7 @@ const refreshAvatar = (req, res, next) => {
     { avatar },
     { new: true, runValidators: true },
   )
-    .then((user) => res.status(STATUS_OK).send({ data: user }))
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequetError('Неверные данные'));
@@ -120,7 +117,7 @@ const getUserInfo = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
       }
-      res.status(STATUS_OK).send(user);
+      res.send(user);
     })
     .catch(next);
 };
